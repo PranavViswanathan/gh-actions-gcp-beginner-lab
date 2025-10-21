@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
 from google.cloud import storage
 import joblib
@@ -23,10 +23,14 @@ def preprocess_data(X, y):
 
 # Define a function to train the model
 def train_model(X_train, y_train):
-  model = RandomForestClassifier(n_estimators=100, random_state=42)
-  model.fit(X_train, y_train)
-  return model
-
+    model = GradientBoostingClassifier(
+        n_estimators=100,   # number of boosting stages
+        learning_rate=0.1,  # step size shrinkage
+        max_depth=3,        # depth of each individual tree
+        random_state=42
+    )
+    model.fit(X_train, y_train)
+    return model
 # Define a function to save the model both locally and in GCS
 def save_model_to_gcs(model, bucket_name, blob_name):
   joblib.dump(model, "model.joblib")
